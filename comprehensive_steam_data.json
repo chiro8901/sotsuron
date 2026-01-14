@@ -1,0 +1,843 @@
+[
+  {
+    "app_id": 730,
+    "timestamp": "2026-01-15T01:50:28.961732",
+    "current_players": 1335612,
+    "name": "Counter-Strike 2",
+    "type": "game",
+    "is_free": true,
+    "short_description": "20年以上にわたり、Couter-Strikeは世界中の何百万人ものプレイヤーに、最高の対戦エクスペリエンスを提供してきました。そして今、CSの次なるチャプターが幕を開けようとしています。それが『Counter-Strike 2』です。",
+    "developers": [
+      "Valve"
+    ],
+    "publishers": [
+      "Valve"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2012年8月21日"
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "クロスプラットフォームマルチプレイヤー",
+      "Steamトレーディングカード",
+      "Steamワークショップ",
+      "アプリ内購入",
+      "テキストサイズの調整",
+      "カメラの快適性",
+      "色のオプション",
+      "カスタム音量調整",
+      "時間制限付き入力なしでプレイ可能",
+      "ステレオサウンド",
+      "サラウンドサウンド",
+      "Valveアンチチート有効",
+      "データ",
+      "スマホでRemote Play",
+      "タブレットでRemote Play",
+      "テレビでRemote Play",
+      "Steamタイムライン"
+    ],
+    "genres": [
+      "アクション",
+      "無料プレイ"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": true
+    },
+    "metacritic_score": null,
+    "total_achievements": 1,
+    "top_achievements": [
+      {
+        "name": "PLAY_CS2",
+        "percent": "37.0"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "2026 Service Medal",
+        "date": "2025-12-27T05:04:55",
+        "author": "Gautam"
+      },
+      {
+        "title": "The Year of the Bees",
+        "date": "2025-12-19T06:19:02",
+        "author": "Mr. Mario Kart"
+      },
+      {
+        "title": "Counter-Strike 2 Update",
+        "date": "2025-12-19T06:18:53",
+        "author": "jo"
+      }
+    ]
+  },
+  {
+    "app_id": 570,
+    "timestamp": "2026-01-15T01:50:32.567018",
+    "current_players": 679065,
+    "name": "Dota 2",
+    "type": "game",
+    "is_free": true,
+    "short_description": "毎日、世界中で何百万人ものプレイヤーが100種類以上のヒーローを使ってバトルに参加しています。 Dotaには10時間プレイした人にも、1000時間プレイした人にも、いつも新たな発見があります。 頻繁なアップデートによって、ゲームプレイや機能、ヒーローが常に進化し続けているDota 2の勢いはとどまるところを知りません。",
+    "developers": [
+      "Valve"
+    ],
+    "publishers": [
+      "Valve"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2013年7月9日"
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "協力プレイ",
+      "Steamトレーディングカード",
+      "Steamワークショップ",
+      "SteamVRコレクティブル",
+      "アプリ内購入",
+      "カメラの快適性",
+      "色のオプション",
+      "カスタム音量調整",
+      "Valveアンチチート有効",
+      "Steamタイムライン"
+    ],
+    "genres": [
+      "アクション",
+      "ストラテジー",
+      "無料プレイ"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": true,
+      "linux": true
+    },
+    "metacritic_score": 90,
+    "total_achievements": 0,
+    "top_achievements": [],
+    "recent_news": [
+      {
+        "title": "Former Dota 2 pro is selling his TI championship ring on Ebay for some serious cash, but it's not because he's \"desperate\"",
+        "date": "2026-01-05T18:58:53",
+        "author": "editor@pcgamesn.com"
+      },
+      {
+        "title": "7.40b Gameplay Patch",
+        "date": "2025-12-24T08:05:02",
+        "author": "flynnch"
+      },
+      {
+        "title": "Dota 2 patch 7.40 adds new hero Largo, whose ultimate has one of the coolest mechanics I've seen in ages",
+        "date": "2025-12-16T18:57:40",
+        "author": "editor@pcgamesn.com"
+      }
+    ]
+  },
+  {
+    "app_id": 1086940,
+    "timestamp": "2026-01-15T01:50:36.046538",
+    "current_players": 59268,
+    "name": "Baldur's Gate 3",
+    "type": "game",
+    "is_free": false,
+    "short_description": "Baldur’s Gate 3 is a story-rich, party-based RPG set in the universe of Dungeons &amp; Dragons, where your choices shape a tale of fellowship and betrayal, survival and sacrifice, and the lure of absolute power.",
+    "developers": [
+      "Larian Studios"
+    ],
+    "publishers": [
+      "Larian Studios"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2023年8月3日"
+    },
+    "price": {
+      "currency": "JPY",
+      "initial": 8499.0,
+      "final": 8499.0,
+      "discount_percent": 0
+    },
+    "categories": [
+      "シングルプレイヤー",
+      "マルチプレイヤー",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "LAN協力プレイ",
+      "クロスプラットフォームマルチプレイヤー",
+      "Steam実績",
+      "フルコントローラサポート",
+      "Steamトレーディングカード",
+      "テキストサイズの調整",
+      "カメラの快適性",
+      "色のオプション",
+      "カスタム音量調整",
+      "難易度の調整",
+      "時間制限付き入力なしでプレイ可能",
+      "いつでもセーブ可能",
+      "ステレオサウンド",
+      "字幕オプション",
+      "サラウンドサウンド",
+      "Steamクラウド",
+      "テレビでRemote Play",
+      "Remote Play Together",
+      "ファミリーシェアリング"
+    ],
+    "genres": [
+      "アドベンチャー",
+      "RPG",
+      "ストラテジー"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": true,
+      "linux": false
+    },
+    "metacritic_score": 96,
+    "total_achievements": 54,
+    "top_achievements": [
+      {
+        "name": "BG3_Quest08",
+        "percent": "9.5"
+      },
+      {
+        "name": "BG3_Quest25",
+        "percent": "9.1"
+      },
+      {
+        "name": "BG3_Quest01",
+        "percent": "89.6"
+      },
+      {
+        "name": "BG3_Quest52",
+        "percent": "7.5"
+      },
+      {
+        "name": "BG3_Quest40",
+        "percent": "7.3"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Larian's learnt a lot from Baldur's Gate 3 going into Divinity, including the fact that hand-crafted loot is probably better: 'Randomization did not save us much time'",
+        "date": "2026-01-13T00:14:03",
+        "author": "Harvey Randall"
+      },
+      {
+        "title": "'I wish Wyll had gotten more content' says the Baldur's Gate 3 writer who wrote him, and splitting his story between devils and dads 'might have been a mistake in hindsight'",
+        "date": "2026-01-10T02:13:15",
+        "author": "Joshua Wolens"
+      },
+      {
+        "title": "Larian hope to have future companions spend less time jumping straight into your bed, and more time with each other",
+        "date": "2026-01-10T02:11:19",
+        "author": ""
+      }
+    ]
+  },
+  {
+    "app_id": 271590,
+    "timestamp": "2026-01-15T01:50:39.544762",
+    "current_players": 105869,
+    "name": "グランド・セフト・オートV レガシー",
+    "type": "game",
+    "is_free": false,
+    "short_description": "PC版『グランド・セフト・オートV』では、受賞に輝いたロスサントスとブレイン郡の世界を最大4Kの解像度で体験できるほか、60FPSの動作を実現しています。",
+    "developers": [
+      "Rockstar North"
+    ],
+    "publishers": [
+      "Rockstar Games"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2015年4月13日"
+    },
+    "categories": [
+      "シングルプレイヤー",
+      "マルチプレイヤー",
+      "PvP",
+      "オンラインPvP",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "Steam実績",
+      "フルコントローラサポート",
+      "スマホでRemote Play",
+      "タブレットでRemote Play",
+      "テレビでRemote Play"
+    ],
+    "genres": [
+      "アクション",
+      "アドベンチャー"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": 96,
+    "total_achievements": 77,
+    "top_achievements": [
+      {
+        "name": "ACH50",
+        "percent": "9.5"
+      },
+      {
+        "name": "ACHH10",
+        "percent": "9.2"
+      },
+      {
+        "name": "ACH00",
+        "percent": "82.5"
+      },
+      {
+        "name": "ACHGO6",
+        "percent": "8.9"
+      },
+      {
+        "name": "ACH30",
+        "percent": "75.2"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Rockstar baulks as a Charlie Kirk assassination mission is created in GTA Online, bans it and censors his name, but there's more out there",
+        "date": "2026-01-13T21:34:29",
+        "author": "Rich Stanton"
+      },
+      {
+        "title": "Claim a Free Hands On Car Wash Property and Get 3X Rewards on Legal Money Fronts",
+        "date": "2026-01-09T20:13:38",
+        "author": "rockstarintl_steam"
+      },
+      {
+        "title": "The Futuristic New Progen Luiva Supercar Arrives for the Holidays in GTA Online",
+        "date": "2025-12-20T00:29:09",
+        "author": "rockstarintl_steam"
+      }
+    ]
+  },
+  {
+    "app_id": 252490,
+    "timestamp": "2026-01-15T01:50:42.988061",
+    "current_players": 130677,
+    "name": "Rust",
+    "type": "game",
+    "is_free": false,
+    "short_description": "『Rust』における唯一の目的は、生き残ること。島の野生生物、そこに住む他の者たち、自然環境、そして他の生存者たち——あらゆるものがプレイヤーの命を狙う。どんな手を使ってでも、次の夜を生き延びろ。",
+    "developers": [
+      "Facepunch Studios"
+    ],
+    "publishers": [
+      "Facepunch Studios"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2018年2月8日"
+    },
+    "price": {
+      "currency": "JPY",
+      "initial": 4600.0,
+      "final": 4600.0,
+      "discount_percent": 0
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "MMO",
+      "PvP",
+      "オンラインPvP",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "クロスプラットフォームマルチプレイヤー",
+      "Steam実績",
+      "Steamトレーディングカード",
+      "Steamワークショップ",
+      "アプリ内購入",
+      "Valveアンチチート有効",
+      "データ",
+      "タブレットでRemote Play"
+    ],
+    "genres": [
+      "アクション",
+      "アドベンチャー",
+      "インディー",
+      "MM（Massively Multiplayer）",
+      "RPG"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": true,
+      "linux": false
+    },
+    "metacritic_score": 69,
+    "total_achievements": 92,
+    "top_achievements": [
+      {
+        "name": "VISIT_ROAD",
+        "percent": "71.8"
+      },
+      {
+        "name": "COLLECT_300_METAL_ORE",
+        "percent": "62.1"
+      },
+      {
+        "name": "DESTROY_10_BARRELS",
+        "percent": "59.4"
+      },
+      {
+        "name": "CONSTRUCT_BASE",
+        "percent": "57.4"
+      },
+      {
+        "name": "COLLECT_65_SCRAP",
+        "percent": "56.5"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Steam Global Top Sellers for week of 6 Jan — 13 January 2026",
+        "date": "2026-01-13T18:00:00",
+        "author": "SteamDB"
+      },
+      {
+        "title": "After Rust's \"massive\" Naval update, its to-do list includes an expanded ecosystem, breeding, and maybe a battle pass",
+        "date": "2026-01-02T21:08:37",
+        "author": "editor@pcgamesn.com"
+      },
+      {
+        "title": "SURVIVING 12 YEARS",
+        "date": "2026-01-02T03:48:23",
+        "author": "Errn"
+      }
+    ]
+  },
+  {
+    "app_id": 1172470,
+    "timestamp": "2026-01-15T01:50:46.433745",
+    "current_players": 88026,
+    "name": "エーペックスレジェンズ",
+    "type": "game",
+    "is_free": true,
+    "short_description": "「エーペックスレジェンズ」は、Respawn Entertainmentが開発を手掛ける、受賞歴のあるプレイ無料のヒーロー シューター。次々と登場する強力なアビリティを持った伝説の戦士を使いこなし、戦術性に富んだ奥深い部隊プレイと革新的ゲームプレイを体験せよ。これが、ヒーローシューターとバトルロイヤルの次世代の進化形だ。",
+    "developers": [
+      "Respawn"
+    ],
+    "publishers": [
+      "Electronic Arts"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2020年11月4日"
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "PvP",
+      "オンラインPvP",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "Steam実績",
+      "フルコントローラサポート",
+      "Steamトレーディングカード",
+      "アプリ内購入",
+      "チャットの文字起こし",
+      "時間制限付き入力なしでプレイ可能"
+    ],
+    "genres": [
+      "アクション",
+      "アドベンチャー",
+      "無料プレイ"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": 88,
+    "total_achievements": 12,
+    "top_achievements": [
+      {
+        "name": "JUMPMASTER_4",
+        "percent": "46.8"
+      },
+      {
+        "name": "FULLY_KITTED_3",
+        "percent": "41.1"
+      },
+      {
+        "name": "KILL_LEADER_6",
+        "percent": "40.8"
+      },
+      {
+        "name": "TEAM_PLAYER_2",
+        "percent": "39.7"
+      },
+      {
+        "name": "APEX_RECON_10",
+        "percent": "32.6"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Apex Legends: Latest Update - 01/06/2026",
+        "date": "2026-01-07T11:17:49",
+        "author": "rspn_jax"
+      },
+      {
+        "title": "Latest Update: Apex Legends 1/6/26",
+        "date": "2026-01-07T05:42:57",
+        "author": "respawn_bean"
+      },
+      {
+        "title": "Amped Midseason Designer’s Notes",
+        "date": "2026-01-07T03:54:11",
+        "author": "respawn_bean"
+      }
+    ]
+  },
+  {
+    "app_id": 578080,
+    "timestamp": "2026-01-15T01:50:49.984995",
+    "current_players": 331417,
+    "name": "PUBG: BATTLEGROUNDS",
+    "type": "game",
+    "is_free": true,
+    "short_description": "バトルロイヤルブームの火付け役となった『PUBG:BATTLEGROUNDS』は無料でプレイすることができます！ マップに降り立ったら武器や物資を獲得し、縮小し続けるセーフゾーンのなかであなただけの生存戦略を駆使して最後まで生き残りましょう。",
+    "developers": [
+      "PUBG Corporation"
+    ],
+    "publishers": [
+      "KRAFTON, Inc."
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2017年12月21日"
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "PvP",
+      "オンラインPvP",
+      "データ",
+      "スマホでRemote Play",
+      "タブレットでRemote Play"
+    ],
+    "genres": [
+      "アクション",
+      "アドベンチャー",
+      "MM（Massively Multiplayer）",
+      "無料プレイ"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": null,
+    "total_achievements": 37,
+    "top_achievements": [
+      {
+        "name": "ACHIVE015",
+        "percent": "9.8"
+      },
+      {
+        "name": "ACHIVE032",
+        "percent": "8.7"
+      },
+      {
+        "name": "ACHIVE006",
+        "percent": "8.2"
+      },
+      {
+        "name": "ACHIVE033",
+        "percent": "7.8"
+      },
+      {
+        "name": "ACHIVE013",
+        "percent": "7.4"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "PUBG: BATTLEGROUNDS Weekly Bans Notice (01/05~01/11)",
+        "date": "2026-01-14T16:00:51",
+        "author": "[****] UZI"
+      },
+      {
+        "title": "PUBG: Blindspot, the top-down one of Plunkbat's siblings, deploys into early access next month",
+        "date": "2026-01-08T21:23:32",
+        "author": ""
+      },
+      {
+        "title": "A frosty new PUBG update adds some incredible high-risk, high-reward tension to its most iconic map",
+        "date": "2026-01-07T20:37:02",
+        "author": "editor@pcgamesn.com"
+      }
+    ]
+  },
+  {
+    "app_id": 381210,
+    "timestamp": "2026-01-15T01:50:53.354598",
+    "current_players": 53457,
+    "name": "デッドバイデイライト",
+    "type": "game",
+    "is_free": false,
+    "short_description": "不気味な悪が支配する領域に、永遠に閉じ込められた生存者たち…その死にさえ救済のない世界で、粘り強い生存者4人と血に飢えた殺人鬼1人が知恵と度胸の試される残酷なゲームに挑む。最高の非対称マルチプレイホラーゲームで生存者または殺人鬼となり、スリルと恐怖に満ちた世界を堪能しよう。",
+    "developers": [
+      "Behaviour Interactive Inc."
+    ],
+    "publishers": [
+      "Behaviour Interactive Inc."
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2016年6月14日"
+    },
+    "price": {
+      "currency": "JPY",
+      "initial": 1980.0,
+      "final": 1980.0,
+      "discount_percent": 0
+    },
+    "categories": [
+      "マルチプレイヤー",
+      "PvP",
+      "オンラインPvP",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "クロスプラットフォームマルチプレイヤー",
+      "Steam実績",
+      "フルコントローラサポート",
+      "Steamトレーディングカード",
+      "Steamクラウド",
+      "スマホでRemote Play",
+      "タブレットでRemote Play",
+      "テレビでRemote Play",
+      "ファミリーシェアリング"
+    ],
+    "genres": [
+      "アクション"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": null,
+    "total_achievements": 288,
+    "top_achievements": [
+      {
+        "name": "ACH_CHAPTER16_KILLER_2",
+        "percent": "9.6"
+      },
+      {
+        "name": "ACH_DLC4_KILLER_2",
+        "percent": "9.5"
+      },
+      {
+        "name": "ACH_KILL_25_CAMPERS",
+        "percent": "9.5"
+      },
+      {
+        "name": "ACH_CAMPER_RANK01",
+        "percent": "9.4"
+      },
+      {
+        "name": "ACH_100_CHASE_INVISIBLE",
+        "percent": "9.4"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Steam Global Top Sellers for week of 6 Jan — 13 January 2026",
+        "date": "2026-01-13T18:00:00",
+        "author": "SteamDB"
+      },
+      {
+        "title": "If for some reason you can't get enough of Stranger Things' Vecna, you can now play as him in Dead by Daylight's latest crossover",
+        "date": "2026-01-10T22:00:00",
+        "author": "Rick Lane"
+      },
+      {
+        "title": "9.4.0 | PTB Patch Notes",
+        "date": "2026-01-07T00:30:46",
+        "author": "Goblin_BHVR"
+      }
+    ]
+  },
+  {
+    "app_id": 359550,
+    "timestamp": "2026-01-15T01:50:57.022802",
+    "current_players": 40639,
+    "name": "レインボーシックス シージ エックス ",
+    "type": "game",
+    "is_free": true,
+    "short_description": "「レインボーシックス シージ エックス」は、卓越した戦略とその遂行が勝利をもたらす、タクティカルチームシューターの代名詞だ。 クイックマッチ、アンランク、デュアルフロントの各種モードと厳選されたオペレーターへのフリーアクセスを楽しもう。",
+    "developers": [
+      "Ubisoft Montreal"
+    ],
+    "publishers": [
+      "Ubisoft"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2015年12月1日"
+    },
+    "categories": [
+      "シングルプレイヤー",
+      "マルチプレイヤー",
+      "PvP",
+      "オンラインPvP",
+      "協力プレイ",
+      "オンライン協力プレイ",
+      "フルコントローラサポート",
+      "Steamトレーディングカード",
+      "アプリ内購入",
+      "スマホでRemote Play",
+      "タブレットでRemote Play"
+    ],
+    "genres": [
+      "アクション",
+      "無料プレイ"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": null,
+    "total_achievements": 48,
+    "top_achievements": [
+      {
+        "name": "RB6X_Ach_7",
+        "percent": "9.4"
+      },
+      {
+        "name": "RB6X_Ach_36",
+        "percent": "9.3"
+      },
+      {
+        "name": "RB6X_Ach_19",
+        "percent": "9.1"
+      },
+      {
+        "name": "RB6X_Ach_37",
+        "percent": "9.0"
+      },
+      {
+        "name": "RB6X_Ach_8",
+        "percent": "9.0"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "Rainbow Six Siege X \"cyberattack\" sees players hit with bogus 'bans,' but Ubisoft assures source code and personal details are safe",
+        "date": "2026-01-05T18:21:13",
+        "author": "editor@pcgamesn.com"
+      },
+      {
+        "title": "Rainbow Six Siege servers are back after hackers randomly doled out bans, unbans, rare skins and 'billions' in in-game currency",
+        "date": "2025-12-30T06:35:36",
+        "author": "Justin Wagner"
+      },
+      {
+        "title": "Ubisoft Denies Data Breach Claims After Rainbow Six Siege Currency Hack",
+        "date": "2025-12-29T14:30:40",
+        "author": "Ridge Harripersad"
+      }
+    ]
+  },
+  {
+    "app_id": 292030,
+    "timestamp": "2026-01-15T01:51:00.480153",
+    "current_players": 21980,
+    "name": "The Witcher 3: Wild Hunt",
+    "type": "game",
+    "is_free": false,
+    "short_description": "怪物狩りを生業とするウィッチャー、「リヴィアのゲラルト」となり、〈予言の子〉を見つけ出す冒険へと身を投じよう。ストーリー重視のオープンワールドRPG『ウィッチャー３ ワイルドハント』では、重大な結果に繋がる様々な決断を下しながら、戦争と怪物たちの恐怖に晒された大陸を旅していくことになる。",
+    "developers": [
+      "CD PROJEKT RED"
+    ],
+    "publishers": [
+      "CD PROJEKT RED"
+    ],
+    "release_date": {
+      "coming_soon": false,
+      "date": "2015年5月18日"
+    },
+    "price": {
+      "currency": "JPY",
+      "initial": 5588.0,
+      "final": 5588.0,
+      "discount_percent": 0
+    },
+    "categories": [
+      "シングルプレイヤー",
+      "Steam実績",
+      "Steamトレーディングカード",
+      "Steamワークショップ",
+      "テキストサイズの調整",
+      "カメラの快適性",
+      "色のオプション",
+      "カスタム音量調整",
+      "難易度の調整",
+      "時間制限付き入力なしでプレイ可能",
+      "いつでもセーブ可能",
+      "ステレオサウンド",
+      "サラウンドサウンド",
+      "部分的コントローラサポート",
+      "Steamクラウド",
+      "タブレットでRemote Play",
+      "テレビでRemote Play",
+      "HDR使用可能",
+      "ファミリーシェアリング"
+    ],
+    "genres": [
+      "RPG"
+    ],
+    "platforms": {
+      "windows": true,
+      "mac": false,
+      "linux": false
+    },
+    "metacritic_score": 93,
+    "total_achievements": 78,
+    "top_achievements": [
+      {
+        "name": "FAST_AND_FURIOUS",
+        "percent": "9.8"
+      },
+      {
+        "name": "EP2_9",
+        "percent": "9.6"
+      },
+      {
+        "name": "EP2_10",
+        "percent": "9.5"
+      },
+      {
+        "name": "EP1_3",
+        "percent": "9.5"
+      },
+      {
+        "name": "EVEN_ODDS",
+        "percent": "9.5"
+      }
+    ],
+    "recent_news": [
+      {
+        "title": "GOG's new owner says DRM makes life \"more difficult\" for customers, so he sees \"no reason to keep it alive\"",
+        "date": "2026-01-13T21:02:06",
+        "author": "editor@pcgamesn.com"
+      },
+      {
+        "title": "Witcher 3 DLC rumors pick up strength as IGN Poland says it knew about all of this years ago",
+        "date": "2026-01-09T06:40:23",
+        "author": "Andy Chalk"
+      },
+      {
+        "title": "Ooh, that rumoured Witcher 3 DLC could be something really funky, if it's set where the latest report suggests",
+        "date": "2026-01-09T01:38:10",
+        "author": ""
+      }
+    ]
+  }
+]
