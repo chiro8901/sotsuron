@@ -6,7 +6,7 @@ from datetime import datetime
 import pandas as pd
 import logging
 from typing import List, Dict, Optional
-\n# API Key（https://steamcommunity.com/dev/apikey で取得）\nSTEAM_API_KEY = ""\n\n
+
 # ロギング設定
 logging.basicConfig(
     level=logging.INFO,
@@ -22,14 +22,15 @@ logger = logging.getLogger(__name__)
 class SteamRandomCollector: 
     """Steam APIからランダムにゲームデータを収集"""
     
-    def __init__(self, api_key=None, delay=0.6, timeout=10, checkpoint_interval=100):\n        """
+    def __init__(self, delay=0.6, timeout=10, checkpoint_interval=100):
+        """
         Args:
             delay: API呼び出し間隔（秒）
             timeout: リクエストタイムアウト（秒）
             checkpoint_interval: 何件ごとに中間保存するか
         """
         self. delay = delay
-        self.api_key = api_key\n        self.timeout = timeout
+        self.timeout = timeout
         self.checkpoint_interval = checkpoint_interval
         
         self.session = requests.Session()
@@ -48,84 +49,46 @@ class SteamRandomCollector:
             'end_time': None
         }
     
-    
     def get_all_app_ids(self) -> List[int]:
         """Steam上の全アプリケーションIDを取得"""
-        logger.info(" 全アプリケーションリストを取得中...")
+        logger.info("📥 全アプリケーションリストを取得中...")
         
-        # 1. APIキーがある場合は新しいIStoreServiceを使用
-        if self.api_key:
-            return self._get_app_ids_via_store_service()
-            
-        # 2. 従来のAPIを試行
-        try:
-            logger.info(" APIキー未指定: 旧API(ISteamApps)を試行します...")
-            url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-            
-            response = self.session.get(url, headers=headers, timeout=self.timeout)
-            response.raise_for_status()
-            
-            data = response.json()
-            apps = data['applist']['apps']
-            app_ids = [app['appid'] for app in apps if app.get('appid')]
-            
-            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
-            return app_ids
-            
-        except Exception as e:
-            logger.error(f" 旧API取得エラー: {e}")
-            logger.warning(" ヒント: Steam APIの仕様変更により、APIキーが必要な場合があります。")
-            logger.warning("   https://steamcommunity.com/dev/apikey でキーを取得し、ファイルの先頭にある STEAM_API_KEY に設定してください。")
-            return []
-
-    def _get_app_ids_via_store_service(self) -> List[int]:
-        """IStoreService (v1) を使用してアプリIDを取得（APIキー必須）"""
-        url = "https://api.steampowered.com/IStoreService/GetAppList/v1/"
-        app_ids = []
-        last_appid = 0
-        has_more = True
+        # 複数のエンドポイントを試す
+        endpoints = [
+            "https://api.steampowered.com/ISteamApps/GetAppList/v2/",
+            "https://api.steampowered.com/ISteamApps/GetAppList/v0002/",
+            "https://api.steampowered.com/ISteamApps/GetAppList/v1/",
+        ]
         
-        logger.info(" IStoreService(v1)経由でリスト取得中...")
-        
-        while has_more:
-            params = {
-                'key': self.api_key,
-                'include_games': 1,
-                'include_dlc': 0,
-                'include_software': 0,
-                'last_appid': last_appid,
-                'max_results': 50000
-            }
+        for url in endpoints:
             try:
-                resp = self.session.get(url, params=params, timeout=self.timeout)
-                resp.raise_for_status()
-                data = resp.json()
+                logger.info(f"試行中: {url}")
+                response = self.session.get(url, timeout=self.timeout)
+                response.raise_for_status()
                 
-                response_body = data.get('response', {})
-                apps = response_body.get('apps', [])
+                data = response.json()
+                apps = data['applist']['apps']
+                app_ids = [app['appid'] for app in apps if app.get('appid')]
                 
-                if not apps:
-                    break
+                logger.info(f"✅ {len(app_ids):,}個のアプリケーションIDを取得しました")
+                logger.info(f"📊 app_id範囲: {min(app_ids)} 〜 {max(app_ids)}")
                 
-                new_ids = [app['appid'] for app in apps]
-                app_ids.extend(new_ids)
-                
-                last_appid = response_body.get('last_appid')
-                has_more = response_body.get('have_more_results', False)
-                
-                logger.info(f"  - 現在 {len(app_ids)} 件...")
-                time.sleep(1)
+                return app_ids
                 
             except Exception as e:
-                logger.error(f" IStoreServiceエラー: {e}")
-                break
+                logger.warning(f"⚠️ {url} でエラー: {e}")
+                continue
         
-        if app_ids:
-            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
-        
+        # すべて失敗した場合、ランダムなapp_idを生成
+        logger.warning("⚠️ APIからの取得に失敗しました。ランダムなapp_idを生成します")
+        logger.info("💡 Steam app_idは通常 10 〜 2,500,000 の範囲です")
+        # よく使われる範囲のIDをランダムに生成
+        app_ids = list(range(10, 2500000, 10))
+        random.shuffle(app_ids)
+        logger.info(f"✅ {len(app_ids):,}個のapp_id候補を生成しました")
         return app_ids
-\n    def random_sample_app_ids(self, all_app_ids: List[int], sample_size: int, seed=None) -> List[int]:
+    
+    def random_sample_app_ids(self, all_app_ids: List[int], sample_size: int, seed=None) -> List[int]:
         """
         ランダムにapp_idをサンプリング
         
@@ -490,7 +453,8 @@ def main():
     print("="*70)
     
     # コレクター初期化
-    # APIキーを設定\n    api_key_to_use = STEAM_API_KEY if STEAM_API_KEY else None\n    collector = SteamRandomCollector(\n        api_key=api_key_to_use,\n        delay=0.6,
+    collector = SteamRandomCollector(
+        delay=0.6,
         timeout=10,
         checkpoint_interval=100
     )
