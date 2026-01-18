@@ -6,8 +6,7 @@ from datetime import datetime
 import pandas as pd
 import logging
 from typing import List, Dict, Optional
-# API Key（https://steamcommunity.com/dev/apikey で取得）
-STEAM_API_KEY = ""
+
 # ロギング設定
 logging.basicConfig(
     level=logging.INFO,
@@ -23,15 +22,14 @@ logger = logging.getLogger(__name__)
 class SteamRandomCollector: 
     """Steam APIからランダムにゲームデータを収集"""
     
-    def __init__(self, api_key=None, delay=0.6, timeout=10, checkpoint_interval=100):
+    def __init__(self, delay=0.6, timeout=10, checkpoint_interval=100):
         """
         Args:
             delay: API呼び出し間隔（秒）
             timeout: リクエストタイムアウト（秒）
             checkpoint_interval: 何件ごとに中間保存するか
         """
-        self.delay = delay
-        self.api_key = api_key
+        self. delay = delay
         self.timeout = timeout
         self.checkpoint_interval = checkpoint_interval
         
@@ -51,84 +49,45 @@ class SteamRandomCollector:
             'end_time': None
         }
     
-    
     def get_all_app_ids(self) -> List[int]:
         """Steam上の全アプリケーションIDを取得"""
-        logger.info(" 全アプリケーションリストを取得中...")
+        logger.info("📥 全アプリケーションリストを取得中...")
         
-        # 1. APIキーがある場合は新しいIStoreServiceを使用
-        if self.api_key:
-            return self._get_app_ids_via_store_service()
-            
-        # 2. 従来のAPIを試行
-        try:
-            logger.info(" APIキー未指定: 旧API(ISteamApps)を試行します...")
-            url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-            
-            response = self.session.get(url, headers=headers, timeout=self.timeout)
-            response.raise_for_status()
-            
-            data = response.json()
-            apps = data['applist']['apps']
-            app_ids = [app['appid'] for app in apps if app.get('appid')]
-            
-            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
-            return app_ids
-            
-        except Exception as e:
-            logger.error(f" 旧API取得エラー: {e}")
-            logger.warning(" ヒント: Steam APIの仕様変更により、APIキーが必要な場合があります。")
-            logger.warning("   https://steamcommunity.com/dev/apikey でキーを取得し、ファイルの先頭にある STEAM_API_KEY に設定してください。")
-            return []
-
-    def _get_app_ids_via_store_service(self) -> List[int]:
-        """IStoreService (v1) を使用してアプリIDを取得（APIキー必須）"""
-        url = "https://api.steampowered.com/IStoreService/GetAppList/v1/"
-        app_ids = []
-        last_appid = 0
-        has_more = True
+        # 複数のエンドポイントを試す
+        endpoints = [
+            "https://api.steampowered.com/ISteamApps/GetAppList/v2/",
+            "https://api.steampowered.com/ISteamApps/GetAppList/v0002/",
+            "https://api.steampowered.com/ISteamApps/GetAppList/v1/",
+        ]
         
-        logger.info(" IStoreService(v1)経由でリスト取得中...")
-        
-        while has_more:
-            params = {
-                'key': self.api_key,
-                'include_games': 1,
-                'include_dlc': 0,
-                'include_software': 0,
-                'last_appid': last_appid,
-                'max_results': 50000
-            }
+        for url in endpoints:
             try:
-                resp = self.session.get(url, params=params, timeout=self.timeout)
-                resp.raise_for_status()
-                data = resp.json()
+                logger.info(f"試行中: {url}")
+                response = self.session.get(url, timeout=self.timeout)
+                response.raise_for_status()
                 
-                response_body = data.get('response', {})
-                apps = response_body.get('apps', [])
+                data = response.json()
+                apps = data['applist']['apps']
+                app_ids = [app['appid'] for app in apps if app.get('appid')]
                 
-                if not apps:
-                    break
+                logger.info(f"✅ {len(app_ids):,}個のアプリケーションIDを取得しました")
+                logger.info(f"📊 app_id範囲: {min(app_ids)} 〜 {max(app_ids)}")
                 
-                new_ids = [app['appid'] for app in apps]
-                app_ids.extend(new_ids)
-                
-                last_appid = response_body.get('last_appid')
-                has_more = response_body.get('have_more_results', False)
-                
-                logger.info(f"  - 現在 {len(app_ids)} 件...")
-                time.sleep(1)
+                return app_ids
                 
             except Exception as e:
-                logger.error(f" IStoreServiceエラー: {e}")
-                break
+                logger.warning(f"⚠️ {url} でエラー: {e}")
+                continue
         
-        if app_ids:
-            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
-        
+        # すべて失敗した場合、ランダムなapp_idを生成
+        logger.warning("⚠️ APIからの取得に失敗しました。ランダムなapp_idを生成します")
+        logger.info("💡 Steam app_idは通常 10 〜 2,500,000 の範囲です")
+        # よく使われる範囲のIDをランダムに生成
+        app_ids = list(range(10, 2500000, 10))
+        random.shuffle(app_ids)
+        logger.info(f"✅ {len(app_ids):,}個のapp_id候補を生成しました")
         return app_ids
-
+    
     def random_sample_app_ids(self, all_app_ids: List[int], sample_size: int, seed=None) -> List[int]:
         """
         ランダムにapp_idをサンプリング
@@ -145,7 +104,7 @@ class SteamRandomCollector:
         actual_sample_size = min(sample_size, len(all_app_ids))
         sampled_ids = random.sample(all_app_ids, actual_sample_size)
         
-        logger.info(f"🎯 {len(all_app_ids):,}個から{actual_sample_size:,}個をランダムサンプリングしました")
+        logger.info(f"🎯 {len(all_app_ids):,}個から{actual_sample_size: ,}個をランダムサンプリングしました")
         logger.info(f"📊 サンプルID範囲: {min(sampled_ids)} 〜 {max(sampled_ids)}")
         
         return sampled_ids
@@ -160,11 +119,11 @@ class SteamRandomCollector:
                 timeout=self.timeout
             )
             
-            if response.status_code == 200:
+            if response. status_code == 200:
                 data = response.json()
                 if data.get('response', {}).get('result') == 1:
                     return data['response']['player_count']
-        except:
+        except: 
             pass
         
         return None
@@ -190,7 +149,7 @@ class SteamRandomCollector:
     
     def get_game_details(self, app_id: int) -> Optional[Dict]:
         """
-        指定された項目のみを取得:
+        指定された項目のみを取得: 
         - type
         - is_free
         - categories
@@ -215,7 +174,7 @@ class SteamRandomCollector:
                     result = {
                         'app_id': app_id,
                         'type': details.get('type'),
-                        'is_free': details.get('is_free', False),
+                        'is_free':  details.get('is_free', False),
                     }
                     
                     # カテゴリー
@@ -250,14 +209,14 @@ class SteamRandomCollector:
         # 1. ゲーム詳細を取得
         game_data = self.get_game_details(app_id)
         
-        if not game_data:
+        if not game_data: 
             return None
         
         # ゲームタイプのみをフィルタリング
         if game_data.get('type') != 'game':
             return None
         
-        time.sleep(0.2)
+        time. sleep(0.2)
         
         # 2. プレイヤー数を取得
         player_count = self.get_player_count(app_id)
@@ -301,9 +260,9 @@ class SteamRandomCollector:
                 speed = i / elapsed if elapsed > 0 else 0
                 remaining = (len(app_ids) - i) / speed if speed > 0 else 0
                 
-                logger.info(f"\n{'='*70}")
-                logger.info(f"進捗: {i:,}/{len(app_ids):,} ({i/len(app_ids)*100:.1f}%)")
-                logger.info(f"成功: {self.stats['successful']:,} | 失敗: {self.stats['failed']:,}")
+                logger. info(f"\n{'='*70}")
+                logger.info(f"進捗: {i: ,}/{len(app_ids):,} ({i/len(app_ids)*100:.1f}%)")
+                logger.info(f"成功: {self.stats['successful']:,} | 失敗: {self. stats['failed']:,}")
                 logger.info(f"速度: {speed:.2f}ゲーム/秒")
                 logger.info(f"残り時間: 約{remaining/60:.1f}分")
                 logger.info(f"{'='*70}")
@@ -329,7 +288,7 @@ class SteamRandomCollector:
             
             # レート制限対策
             if i < len(app_ids):
-                time.sleep(self.delay)
+                time.sleep(self. delay)
         
         self.stats['end_time'] = datetime.now()
         self._print_final_stats()
@@ -355,7 +314,7 @@ class SteamRandomCollector:
         logger.info(f"成功:                {self.stats['successful']:,}")
         logger.info(f"失敗:               {self.stats['failed']:,}")
         logger.info(f"成功率:             {self.stats['successful']/self.stats['total_requested']*100:.1f}%")
-        logger.info(f"プレイヤー数あり:   {self.stats['with_players']:,} ({self.stats['with_players']/max(self.stats['successful'], 1)*100:.1f}%)")
+        logger.info(f"プレイヤー数あり:   {self.stats['with_players']: ,} ({self.stats['with_players']/max(self.stats['successful'], 1)*100:.1f}%)")
         logger.info(f"メタスコアあり:     {self.stats['with_metacritic']:,} ({self.stats['with_metacritic']/max(self.stats['successful'], 1)*100:.1f}%)")
         logger.info(f"処理時間:           {duration:.1f}秒 ({duration/60:.1f}分 / {duration/3600:.2f}時間)")
         logger.info(f"平均速度:           {self.stats['successful']/duration:.2f}ゲーム/秒")
@@ -377,7 +336,7 @@ class SteamRandomCollector:
                 if isinstance(game_copy.get('categories'), list):
                     game_copy['categories'] = '|'.join(game_copy['categories'])
                 if isinstance(game_copy.get('genres'), list):
-                    game_copy['genres'] = '|'.join(game_copy['genres'])
+                    game_copy['genres'] = '|'. join(game_copy['genres'])
                 data_for_csv.append(game_copy)
             
             df = pd.DataFrame(data_for_csv)
@@ -445,16 +404,16 @@ def print_data_summary(data: List[Dict]):
     total = len(data)
     free_games = sum(1 for g in data if g.get('is_free'))
     with_price = sum(1 for g in data if g.get('price_jpy') and g['price_jpy'] > 0)
-    with_metacritic = sum(1 for g in data if g.get('metacritic_score'))
+    with_metacritic = sum(1 for g in data if g. get('metacritic_score'))
     with_players = sum(1 for g in data if g.get('player_count') and g['player_count'] > 0)
     with_achievements = sum(1 for g in data if g.get('total_achievements'))
     
     print(f"総ゲーム数:            {total:,}")
     print(f"無料ゲーム:            {free_games:,} ({free_games/total*100:.1f}%)")
     print(f"有料ゲーム:           {with_price:,} ({with_price/total*100:.1f}%)")
-    print(f"メタスコアあり:       {with_metacritic:,} ({with_metacritic/total*100:.1f}%)")
+    print(f"メタスコアあり:       {with_metacritic:,} ({with_metacritic/total*100:. 1f}%)")
     print(f"プレイヤー数あり:     {with_players:,} ({with_players/total*100:.1f}%)")
-    print(f"実績あり:             {with_achievements:,} ({with_achievements/total*100:.1f}%)")
+    print(f"実績あり:             {with_achievements: ,} ({with_achievements/total*100:.1f}%)")
     
     # 価格統計
     prices = [g['price_jpy'] for g in data if g.get('price_jpy') and g['price_jpy'] > 0]
@@ -494,10 +453,7 @@ def main():
     print("="*70)
     
     # コレクター初期化
-    # APIキーを設定
-    api_key_to_use = STEAM_API_KEY if STEAM_API_KEY else None
     collector = SteamRandomCollector(
-        api_key=api_key_to_use,
         delay=0.6,
         timeout=10,
         checkpoint_interval=100
@@ -526,12 +482,12 @@ def main():
         target_count = 100
     elif choice == '2':
         target_count = 1000
-    elif choice == '3':
+    elif choice == '3': 
         target_count = 5000
-    elif choice == '4':
+    elif choice == '4': 
         target_count = 10000
     elif choice == '5':
-        target_count = int(input("収集するゲーム数を入力: "))
+        target_count = int(input("収集するゲーム数を入力:  "))
     else:
         target_count = 100
     
@@ -565,7 +521,7 @@ def main():
         logger.info("\n💾 データを保存中...")
         
         # JSON保存
-        collector.save_to_json(collected_data, f'{output_prefix}.json')
+        collector.save_to_json(collected_data, f'{output_prefix}. json')
         
         # CSV保存
         collector.save_to_csv(collected_data, f'{output_prefix}.csv')
@@ -575,7 +531,6 @@ def main():
         if save_excel.lower() == 'y':
             collector.save_to_excel(collected_data, f'{output_prefix}.xlsx')
         
-        # サンプルデータ表示
         # サンプルデータ表示
         print("\n📊 取得データのサンプル（最初の3件）:")
         print("="*70)
@@ -588,7 +543,7 @@ def main():
         # データ分析サマリー
         print_data_summary(collected_data)
     else:
-        logger.warning("⚠️ データが収集できませんでした")
+        logger. warning("⚠️ データが収集できませんでした")
 
 
 if __name__ == "__main__":

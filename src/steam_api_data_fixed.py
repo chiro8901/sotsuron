@@ -2,10 +2,14 @@ import requests
 import json
 import time
 import random
+import os
 from datetime import datetime
 import pandas as pd
 import logging
 from typing import List, Dict, Optional
+
+# API Key（https://steamcommunity.com/dev/apikey で取得）
+STEAM_API_KEY = "942710D8C9D88DF9C28ED5E25B03CFED"
 
 # ロギング設定
 logging.basicConfig(
@@ -22,14 +26,15 @@ logger = logging.getLogger(__name__)
 class SteamRandomCollector: 
     """Steam APIからランダムにゲームデータを収集"""
     
-    def __init__(self, delay=0.6, timeout=10, checkpoint_interval=100):
+    def __init__(self, api_key=None, delay=0.6, timeout=10, checkpoint_interval=100):
         """
         Args:
             delay: API呼び出し間隔（秒）
             timeout: リクエストタイムアウト（秒）
             checkpoint_interval: 何件ごとに中間保存するか
         """
-        self. delay = delay
+        self.delay = delay
+        self.api_key = api_key
         self.timeout = timeout
         self.checkpoint_interval = checkpoint_interval
         
@@ -49,28 +54,84 @@ class SteamRandomCollector:
             'end_time': None
         }
     
+    
     def get_all_app_ids(self) -> List[int]:
         """Steam上の全アプリケーションIDを取得"""
-        logger.info("📥 全アプリケーションリストを取得中...")
+        logger.info(" 全アプリケーションリストを取得中...")
         
+        # 1. APIキーがある場合は新しいIStoreServiceを使用
+        if self.api_key:
+            return self._get_app_ids_via_store_service()
+            
+        # 2. 従来のAPIを試行
         try:
+            logger.info(" APIキー未指定: 旧API(ISteamApps)を試行します...")
             url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
-            response = self.session. get(url, timeout=self. timeout)
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+            
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
             response.raise_for_status()
             
             data = response.json()
             apps = data['applist']['apps']
             app_ids = [app['appid'] for app in apps if app.get('appid')]
             
-            logger.info(f"✅ {len(app_ids):,}個のアプリケーションIDを取得しました")
-            logger.info(f"📊 app_id範囲: {min(app_ids)} 〜 {max(app_ids)}")
-            
+            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
             return app_ids
             
         except Exception as e:
-            logger.error(f"❌ アプリリスト取得エラー: {e}")
+            logger.error(f" 旧API取得エラー: {e}")
+            logger.warning(" ヒント: Steam APIの仕様変更により、APIキーが必要な場合があります。")
+            logger.warning("   https://steamcommunity.com/dev/apikey でキーを取得し、ファイルの先頭にある STEAM_API_KEY に設定してください。")
             return []
-    
+
+    def _get_app_ids_via_store_service(self) -> List[int]:
+        """IStoreService (v1) を使用してアプリIDを取得（APIキー必須）"""
+        url = "https://api.steampowered.com/IStoreService/GetAppList/v1/"
+        app_ids = []
+        last_appid = 0
+        has_more = True
+        
+        logger.info(" IStoreService(v1)経由でリスト取得中...")
+        
+        while has_more:
+            params = {
+                'key': self.api_key,
+                'include_games': 1,
+                'include_dlc': 0,
+                'include_software': 0,
+                'last_appid': last_appid,
+                'max_results': 50000
+            }
+            try:
+                resp = self.session.get(url, params=params, timeout=self.timeout)
+                resp.raise_for_status()
+                data = resp.json()
+                
+                response_body = data.get('response', {})
+                apps = response_body.get('apps', [])
+                
+                if not apps:
+                    break
+                
+                new_ids = [app['appid'] for app in apps]
+                app_ids.extend(new_ids)
+                
+                last_appid = response_body.get('last_appid')
+                has_more = response_body.get('have_more_results', False)
+                
+                logger.info(f"  - 現在 {len(app_ids)} 件...")
+                time.sleep(1)
+                
+            except Exception as e:
+                logger.error(f" IStoreServiceエラー: {e}")
+                break
+        
+        if app_ids:
+            logger.info(f" {len(app_ids):,}個のアプリケーションIDを取得しました")
+        
+        return app_ids
+
     def random_sample_app_ids(self, all_app_ids: List[int], sample_size: int, seed=None) -> List[int]:
         """
         ランダムにapp_idをサンプリング
@@ -222,21 +283,58 @@ class SteamRandomCollector:
         
         return game_data
     
-    def collect_bulk(self, app_ids: List[int], output_prefix='steam_random') -> List[Dict]:
+    def collect_bulk(self, app_ids: List[int], output_prefix='steam_random', resume=False) -> List[Dict]:
         """
         大量のゲームデータを収集
+        
+        Args:
+            app_ids: 収集するapp_idのリスト
+            output_prefix: 出力ファイルのプレフィックス
+            resume: Trueの場合、既存のチェックポイントから再開
         """
+        all_data = []
+        processed_ids = set()
+        start_index = 0
+        
+        # 再開モード: 既存のチェックポイントを探す
+        if resume:
+            checkpoint_loaded = False
+            # チェックポイントファイルを降順で探す
+            for i in range(len(app_ids), 0, -self.checkpoint_interval):
+                checkpoint_file = f'{output_prefix}_checkpoint_{i}.json'
+                if os.path.exists(checkpoint_file):
+                    logger.info(f"🔄 チェックポイント発見: {checkpoint_file}")
+                    try:
+                        with open(checkpoint_file, 'r', encoding='utf-8') as f:
+                            all_data = json.load(f)
+                        processed_ids = {game['app_id'] for game in all_data}
+                        start_index = i
+                        checkpoint_loaded = True
+                        logger.info(f"✅ {len(all_data)}件のデータを復元しました")
+                        logger.info(f"📍 {start_index}番目から再開します")
+                        break
+                    except Exception as e:
+                        logger.warning(f"⚠️ チェックポイント読み込みエラー: {e}")
+            
+            if not checkpoint_loaded:
+                logger.info("ℹ️ チェックポイントが見つかりませんでした。最初から開始します")
+        
         self.stats['total_requested'] = len(app_ids)
+        self.stats['successful'] = len(all_data)
         self.stats['start_time'] = datetime.now()
         
         logger.info("="*70)
         logger.info(f"🚀 {len(app_ids):,}ゲームのデータ収集を開始します")
+        if resume and start_index > 0:
+            logger.info(f"🔄 再開モード: {start_index}/{len(app_ids)}から継続")
         logger.info(f"⏱️  推定所要時間: {len(app_ids) * self.delay / 60:.1f}分 ({len(app_ids) * self.delay / 3600:.1f}時間)")
         logger.info("="*70)
         
-        all_data = []
-        
         for i, app_id in enumerate(app_ids, 1):
+            # スキップ済みのIDはスキップ
+            if app_id in processed_ids:
+                continue
+            
             # 進捗表示
             if i % 50 == 0 or i == 1:
                 elapsed = (datetime.now() - self.stats['start_time']).total_seconds()
@@ -255,6 +353,7 @@ class SteamRandomCollector:
             
             if game_data:
                 all_data.append(game_data)
+                processed_ids.add(app_id)
                 self.stats['successful'] += 1
                 
                 if i % 10 == 0:
@@ -265,8 +364,10 @@ class SteamRandomCollector:
             
             # チェックポイント保存
             if i % self.checkpoint_interval == 0:
-                checkpoint_file = f'{output_prefix}_checkpoint_{i}. json'
+                checkpoint_file = f'{output_prefix}_checkpoint_{i}.json'
                 self._save_checkpoint(all_data, checkpoint_file)
+                # 処理済みIDリストも保存
+                self._save_processed_ids(processed_ids, f'{output_prefix}_processed_ids.json')
                 logger.info(f"💾 チェックポイント保存: {checkpoint_file}")
             
             # レート制限対策
@@ -285,6 +386,14 @@ class SteamRandomCollector:
                 json.dump(data, f, ensure_ascii=False, indent=2)
         except Exception as e:
             logger.error(f"チェックポイント保存エラー: {e}")
+    
+    def _save_processed_ids(self, processed_ids: set, filename: str):
+        """処理済みIDリストを保存"""
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(list(processed_ids), f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.error(f"処理済みIDリスト保存エラー: {e}")
     
     def _print_final_stats(self):
         """最終統計を表示"""
@@ -421,7 +530,7 @@ def main():
     """メイン実行関数"""
     
     print("="*70)
-    print("🎲 Steam ランダムゲームデータ収集ツール")
+    print("🎲 Steam ランダムゲームデータ収集ツール (再開機能付き)")
     print("="*70)
     print("\n取得項目:")
     print("  - app_id")
@@ -435,9 +544,24 @@ def main():
     print("  - total_achievements")
     print("="*70)
     
+    # 再開モードの確認
+    resume_mode = False
+    checkpoint_files = [f for f in os.listdir('.') if f.startswith('steam_random_') and '_checkpoint_' in f and f.endswith('.json')]
+    
+    if checkpoint_files:
+        print(f"\n💾 {len(checkpoint_files)}個のチェックポイントファイルが見つかりました")
+        print("前回の収集を途中から再開しますか？")
+        resume_choice = input("(y: 再開 / n: 新規開始): ").lower()
+        if resume_choice == 'y':
+            resume_mode = True
+            print("✅ 再開モードで開始します")
+    
     # コレクター初期化
+    # APIキーを設定
+    api_key_to_use = STEAM_API_KEY if STEAM_API_KEY else None
     collector = SteamRandomCollector(
-        delay=0.6,
+        api_key=api_key_to_use,
+        delay=1.3,  # Steam Store APIの制限を考慮した最適値
         timeout=10,
         checkpoint_interval=100
     )
@@ -451,42 +575,75 @@ def main():
     
     print(f"\n📊 利用可能なアプリID数: {len(all_app_ids):,}")
     
-    # 収集数を選択
-    print("\n収集数を選択:")
-    print("1. 100ゲーム（テスト用 - 約1-2分）")
-    print("2. 1,000ゲーム（約10-15分）")
-    print("3. 5,000ゲーム（約50-75分）")
-    print("4. 10,000ゲーム（約100-150分 = 1.5-2.5時間）")
-    print("5. カスタム数")
+    # 再開モードの場合、既存の設定を検出
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    output_prefix = None
+    app_ids_to_collect = []
     
-    choice = input("\n選択 (1-5): ").strip()
+    if resume_mode:
+        # 最新のチェックポイントから設定を復元
+        latest_checkpoint = sorted(checkpoint_files, reverse=True)[0]
+        # ファイル名から設定を抽出: steam_random_1000_20260115_123456_checkpoint_100.json
+        parts = latest_checkpoint.split('_')
+        if len(parts) >= 4:
+            target_count = int(parts[2])
+            timestamp_str = f"{parts[3]}_{parts[4]}"
+            output_prefix = f"steam_random_{target_count}_{timestamp_str}"
+            
+            # 既存のapp_idリストがあれば読み込む
+            processed_ids_file = f'{output_prefix}_processed_ids.json'
+            if os.path.exists(processed_ids_file):
+                with open(processed_ids_file, 'r', encoding='utf-8') as f:
+                    processed_ids = set(json.load(f))
+                    print(f"📋 {len(processed_ids)}個のapp_idがすでに処理済みです")
+            
+            print(f"✅ 前回の設定を復元: {target_count}ゲーム")
+            app_ids_to_collect = collector.random_sample_app_ids(all_app_ids, target_count, seed=None)
     
-    if choice == '1':
-        target_count = 100
-    elif choice == '2':
-        target_count = 1000
-    elif choice == '3': 
-        target_count = 5000
-    elif choice == '4': 
-        target_count = 10000
-    elif choice == '5':
-        target_count = int(input("収集するゲーム数を入力:  "))
-    else:
-        target_count = 100
-    
-    # 乱数シード設定（オプション）
-    use_seed = input("\n乱数シードを設定しますか？（再現性が必要な場合）(y/n): ").lower() == 'y'
-    seed = None
-    if use_seed:
-        seed = int(input("シード値を入力（整数）: "))
-    
-    # ランダムサンプリング
-    app_ids_to_collect = collector.random_sample_app_ids(all_app_ids, target_count, seed=seed)
+    if not resume_mode or not output_prefix:
+        # 新規開始
+        # 収集数を選択
+        print("\n収集数を選択:")
+        print("1. 100ゲーム（テスト用 - 約1-2分）")
+        print("2. 1,000ゲーム（約10-15分）")
+        print("3. 5,000ゲーム（約50-75分）")
+        print("4. 10,000ゲーム（約100-150分 = 1.5-2.5時間）")
+        print("5. カスタム数")
+        
+        choice = input("\n選択 (1-5): ").strip()
+        
+        if choice == '1':
+            target_count = 100
+        elif choice == '2':
+            target_count = 1000
+        elif choice == '3': 
+            target_count = 5000
+        elif choice == '4': 
+            target_count = 10000
+        elif choice == '5':
+            target_count = int(input("収集するゲーム数を入力:  "))
+        else:
+            target_count = 100
+        
+        # 乱数シード設定（オプション）
+        use_seed = input("\n乱数シードを設定しますか？（再現性が必要な場合）(y/n): ").lower() == 'y'
+        seed = None
+        if use_seed:
+            seed = int(input("シード値を入力（整数）: "))
+        
+        # ランダムサンプリング
+        app_ids_to_collect = collector.random_sample_app_ids(all_app_ids, target_count, seed=seed)
+        
+        # 出力ファイル名を生成
+        output_prefix = f'steam_random_{len(app_ids_to_collect)}_{timestamp}'
     
     # 確認
-    estimated_time = len(app_ids_to_collect) * 0.6 / 60
+    estimated_time = len(app_ids_to_collect) * 2.0 / 60  # 1ゲームあたり約2秒
     print(f"\n⏱️  推定所要時間: 約{estimated_time:.1f}分 ({estimated_time/60:.1f}時間)")
-    print(f"🎲 ランダムに選ばれた最初の10個のapp_id: {app_ids_to_collect[:10]}")
+    print(f"⚡ Steam API制限ぎりぎりの最適化済み設定")
+    if not resume_mode:
+        print(f"🎲 ランダムに選ばれた最初の10個のapp_id: {app_ids_to_collect[:10]}")
+    print(f"💾 100件ごとに自動保存されます（中断しても再開可能）")
     confirm = input("\n収集を開始しますか？ (y/n): ")
     
     if confirm.lower() != 'y':
@@ -495,9 +652,8 @@ def main():
     
     # データ収集開始
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    output_prefix = f'steam_random_{len(app_ids_to_collect)}_{timestamp}'
     
-    collected_data = collector.collect_bulk(app_ids_to_collect, output_prefix=output_prefix)
+    collected_data = collector.collect_bulk(app_ids_to_collect, output_prefix=output_prefix, resume=resume_mode)
     
     # データ保存
     if collected_data:
