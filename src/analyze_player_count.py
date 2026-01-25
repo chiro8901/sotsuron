@@ -8,7 +8,7 @@ plt.rcParams['font.family'] = 'MS Gothic'
 plt.rcParams['axes.unicode_minus'] = False  # マイナス記号の文字化け対策
 
 # データ読み込み
-csv_file = r'c:\Users\chiro\titech\sotsuron\steam_random_10000_20260115_150016.csv'
+csv_file = r'c:\Users\chiro\titech\sotsuron\steam_random_50000_20260116_211133.csv'
 print(f"📂 データ読み込み中: {csv_file}")
 df = pd.read_csv(csv_file)
 
